@@ -1,31 +1,53 @@
-import Login from "./pages/Login";
-import Home from "./pages/Home";
 import { Route, Routes } from "react-router-dom";
 import AuthGuard from "./components/AuthGuard";
-import UserManagement from "./pages/UserManagement";
-import AuditLogs from "./pages/AuditLogs";
-import Dashboard from "./pages/Dashboard";
-import Unauthorized from "./pages/Unauthorized";
-import NotFound from "./pages/NotFound";
+import { lazy, Suspense, type ReactNode } from "react";
+import { Spin } from "antd";
+
+const Login = lazy(() => import("./pages/Login"));
+const Home = lazy(() => import("./pages/Home"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const UserManagement = lazy(() => import("./pages/UserManagement"));
+const Unauthorized = lazy(() => import("./pages/Unauthorized"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+function PageLoader({ children }: { children: ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="route-loading">
+          <Spin size="large" />
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<PageLoader><Login /></PageLoader>} />
       <Route
         path="/"
         element={
           <AuthGuard>
-            <Home></Home>
+            <PageLoader><Home /></PageLoader>
           </AuthGuard>
         }
       >
-        <Route index element={<Dashboard />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/user-management" element={<UserManagement />} />
-        <Route path="/audit-logs" element={<AuditLogs />} />
+        <Route index element={<PageLoader><Dashboard /></PageLoader>} />
+        <Route path="/unauthorized" element={<PageLoader><Unauthorized /></PageLoader>} />
+        <Route
+          path="/user-management"
+          element={
+            <AuthGuard permission="admin:user:read">
+              <PageLoader><UserManagement /></PageLoader>
+            </AuthGuard>
+          }
+        />
       </Route>
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<PageLoader><NotFound /></PageLoader>} />
     </Routes>
   );
 };
