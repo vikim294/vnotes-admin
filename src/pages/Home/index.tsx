@@ -1,10 +1,13 @@
 import {
   DashboardOutlined,
+  AuditOutlined,
+  KeyOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   ReadOutlined,
   TeamOutlined,
+  SafetyCertificateOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu, Tooltip, Typography } from "antd";
@@ -18,6 +21,9 @@ const { Header, Sider, Content } = Layout;
 const menuIcons = {
   dashboard: <DashboardOutlined />,
   users: <TeamOutlined />,
+  roles: <SafetyCertificateOutlined />,
+  permissions: <KeyOutlined />,
+  audit: <AuditOutlined />,
 };
 
 function Home() {

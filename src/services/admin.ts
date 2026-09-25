@@ -16,8 +16,59 @@ export interface AdminUser {
   id: number;
   email: string;
   status: "ACTIVE" | "DISABLED";
+  roles: UserRole[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface UserRole {
+  id: number;
+  name: string;
+  builtIn: boolean;
+}
+
+export interface AdminRole {
+  id: number;
+  code: string;
+  name: string;
+  description: string | null;
+  builtIn: boolean;
+  permissions: RolePermission[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RolePermission {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface AdminPermission {
+  id: number;
+  code: string;
+  name: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type AdminAuditAction =
+  | "ADD_USER"
+  | "ENABLE_USER"
+  | "DISABLE_USER"
+  | "ASSIGN_ROLE"
+  | "CREATE_ROLE"
+  | "UPDATE_ROLE"
+  | "DELETE_ROLE"
+  | "ASSIGN_PERMISSION";
+
+export interface AdminAuditLog {
+  id: number;
+  userId: number;
+  action: AdminAuditAction;
+  description: string | null;
+  createdAt: string;
 }
 
 export function login(params: LoginParams) {
@@ -29,5 +80,71 @@ export function login(params: LoginParams) {
 }
 
 export function getUserList() {
-  return request<AdminUser[]>("/admin/user/list");
+  return request<AdminUser[]>("/admin/user/list-with-roles");
+}
+
+export function addAdminUser(email: string) {
+  return request<void>("/admin/user/add", {
+    method: "POST",
+    body: { email },
+  });
+}
+
+export function changeAdminUserStatus(
+  userId: number,
+  status: AdminUser["status"],
+) {
+  return request<void>("/admin/user/enable-or-disable", {
+    method: "PATCH",
+    body: { userId, status },
+  });
+}
+
+export function getRoleList() {
+  return request<AdminRole[]>("/admin/role/list-with-permissions");
+}
+
+export function assignRolesToUser(userId: number, roleIds: number[]) {
+  return request<void>("/admin/user/assign-roles", {
+    method: "POST",
+    body: { userId, roleIds },
+  });
+}
+
+export function createRole(params: Pick<AdminRole, "name" | "description">) {
+  return request<void>("/admin/role", {
+    method: "POST",
+    body: params,
+  });
+}
+
+export function updateRole(
+  params: Pick<AdminRole, "id" | "name" | "description">,
+) {
+  return request<void>("/admin/role", {
+    method: "PATCH",
+    body: params,
+  });
+}
+
+export function deleteRole(id: number) {
+  return request<void>(`/admin/role/${id}`, { method: "DELETE" });
+}
+
+export function assignPermissionsToRole(
+  roleId: number,
+  permissionIds: number[],
+) {
+  return request<void>("/admin/role/assign-permissions", {
+    method: "POST",
+    body: { roleId, permissionIds },
+  });
+}
+
+export function getPermissionList() {
+  return request<AdminPermission[]>("/admin/permission/list");
+}
+
+export function getAuditLogList() {
+  return request<AdminAuditLog[]>("/admin/audit/list");
 }

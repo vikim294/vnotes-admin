@@ -430,6 +430,23 @@ input {
   font-weight: 500;
 }
 
+.audit-description {
+  color: #475467;
+  line-height: 1.6;
+}
+
+.modal-tip {
+  margin-bottom: 20px;
+}
+
+.relation-select {
+  width: 100%;
+}
+
+.ant-modal .ant-form-item:last-child {
+  margin-bottom: 4px;
+}
+
 .state-page,
 .standalone-state-page {
   display: grid;

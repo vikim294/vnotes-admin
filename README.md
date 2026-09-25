@@ -23,9 +23,13 @@ VITE_API_BASE_URL=http://localhost:8080
 - `/login`：管理员登录
 - `/`：仪表盘
 - `/user-management`：用户列表，需要 `admin:user:read` 权限
+- `/role-management`：角色管理，需要 `admin:role:read` 权限
+- `/permission-management`：权限列表，需要 `admin:permission:read` 权限
+- `/audit-logs`：审计日志，需要 `admin:audit:read` 权限
 - `/unauthorized`：无权限提示
 
-操作日志功能暂未开放，等待后端接口完成后再接入。
+用户列表会展示关联角色，并支持覆盖分配自定义角色；角色列表会展示关联权限，
+并支持覆盖分配权限。系统内置角色及关联用户不可执行这些变更操作。
 
 ## 检查命令
 
