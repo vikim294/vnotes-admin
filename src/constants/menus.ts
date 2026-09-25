@@ -2,7 +2,13 @@ export interface MenuItemData {
   key: string;
   name: string;
   url: string;
-  icon: "dashboard" | "users" | "roles" | "permissions" | "audit";
+  icon:
+    | "dashboard"
+    | "users"
+    | "clientUsers"
+    | "roles"
+    | "permissions"
+    | "audit";
   needPermission?: string;
 }
 
@@ -19,6 +25,13 @@ export const menus: MenuItemData[] = [
     url: "/user-management",
     icon: "users",
     needPermission: "admin:user:read",
+  },
+  {
+    key: "client-users",
+    name: "客户端用户管理",
+    url: "/client-user-management",
+    icon: "clientUsers",
+    needPermission: "client:user:read",
   },
   {
     key: "roles",

@@ -430,6 +430,20 @@ input {
   font-weight: 500;
 }
 
+.client-user-identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.45;
+}
+
+.client-user-identity .ant-typography {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .audit-description {
   color: #475467;
   line-height: 1.6;

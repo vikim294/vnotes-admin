@@ -20,6 +20,8 @@ const actionLabels: Record<AdminAuditAction, { label: string; color: string }> =
   UPDATE_ROLE: { label: "更新角色", color: "geekblue" },
   DELETE_ROLE: { label: "删除角色", color: "red" },
   ASSIGN_PERMISSION: { label: "分配权限", color: "magenta" },
+  ENABLE_CLIENT_USER: { label: "启用客户端用户", color: "green" },
+  DISABLE_CLIENT_USER: { label: "禁用客户端用户", color: "orange" },
 };
 
 const columns: TableColumnsType<AdminAuditLog> = [
@@ -94,7 +96,7 @@ function AuditLogs() {
         <div>
           <Typography.Title level={2}>审计日志</Typography.Title>
           <Typography.Text type="secondary">
-            追踪后台用户、角色与权限相关的管理操作
+            追踪后台用户、客户端用户、角色与权限相关的管理操作
           </Typography.Text>
         </div>
         <Button icon={<ReloadOutlined />} onClick={() => void loadLogs()}>

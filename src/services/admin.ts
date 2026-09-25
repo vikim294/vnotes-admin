@@ -27,6 +27,18 @@ export interface UserRole {
   builtIn: boolean;
 }
 
+export interface ClientUser {
+  id: number;
+  username: string | null;
+  email: string | null;
+  avatarUrl: string | null;
+  status: "ACTIVE" | "DISABLED";
+  noteCount: number;
+  sharedNoteCount: number;
+  articleCount: number;
+  createdAt: string;
+}
+
 export interface AdminRole {
   id: number;
   code: string;
@@ -61,7 +73,9 @@ export type AdminAuditAction =
   | "CREATE_ROLE"
   | "UPDATE_ROLE"
   | "DELETE_ROLE"
-  | "ASSIGN_PERMISSION";
+  | "ASSIGN_PERMISSION"
+  | "ENABLE_CLIENT_USER"
+  | "DISABLE_CLIENT_USER";
 
 export interface AdminAuditLog {
   id: number;
@@ -95,6 +109,20 @@ export function changeAdminUserStatus(
   status: AdminUser["status"],
 ) {
   return request<void>("/admin/user/enable-or-disable", {
+    method: "PATCH",
+    body: { userId, status },
+  });
+}
+
+export function getClientUserList() {
+  return request<ClientUser[]>("/admin/client-user/list");
+}
+
+export function changeClientUserStatus(
+  userId: number,
+  status: ClientUser["status"],
+) {
+  return request<void>("/admin/client-user/enable-or-disable", {
     method: "PATCH",
     body: { userId, status },
   });

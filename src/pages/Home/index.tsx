@@ -9,6 +9,7 @@ import {
   TeamOutlined,
   SafetyCertificateOutlined,
   UserOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu, Tooltip, Typography } from "antd";
 import { useState } from "react";
@@ -21,6 +22,7 @@ const { Header, Sider, Content } = Layout;
 const menuIcons = {
   dashboard: <DashboardOutlined />,
   users: <TeamOutlined />,
+  clientUsers: <UsergroupAddOutlined />,
   roles: <SafetyCertificateOutlined />,
   permissions: <KeyOutlined />,
   audit: <AuditOutlined />,

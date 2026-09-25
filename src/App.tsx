@@ -7,6 +7,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Home = lazy(() => import("./pages/Home"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const UserManagement = lazy(() => import("./pages/UserManagement"));
+const ClientUserManagement = lazy(() => import("./pages/ClientUserManagement"));
 const RoleManagement = lazy(() => import("./pages/RoleManagement"));
 const PermissionManagement = lazy(() => import("./pages/PermissionManagement"));
 const AuditLogs = lazy(() => import("./pages/AuditLogs"));
@@ -46,6 +47,14 @@ const App = () => {
           element={
             <AuthGuard permission="admin:user:read">
               <PageLoader><UserManagement /></PageLoader>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/client-user-management"
+          element={
+            <AuthGuard permission="client:user:read">
+              <PageLoader><ClientUserManagement /></PageLoader>
             </AuthGuard>
           }
         />
