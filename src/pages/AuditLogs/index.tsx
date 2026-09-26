@@ -1,11 +1,17 @@
-import { AuditOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Alert, Button, Table, Tag, Typography } from "antd";
+import {
+  AuditOutlined,
+  DownloadOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
+import { Alert, App, Button, Space, Table, Tag, Typography } from "antd";
 import type { TableColumnsType } from "antd";
 import { useCallback, useEffect, useState } from "react";
+import { getUserPermissions } from "../../common/auth";
 import { formatDateTime } from "../../common/format";
 import { HttpError } from "../../common/http";
 import TableCard from "../../components/TableCard";
 import {
+  exportAuditLogsToExcel,
   getAuditLogList,
   type AdminAuditAction,
   type AdminAuditLog,
@@ -22,7 +28,26 @@ const actionLabels: Record<AdminAuditAction, { label: string; color: string }> =
   ASSIGN_PERMISSION: { label: "分配权限", color: "magenta" },
   ENABLE_CLIENT_USER: { label: "启用客户端用户", color: "green" },
   DISABLE_CLIENT_USER: { label: "禁用客户端用户", color: "orange" },
+  EXPORT_AUDIT_LOGS_TO_EXCEL: { label: "导出审计日志", color: "gold" },
 };
+
+function createFallbackFileName() {
+  const now = new Date();
+  const pad = (value: number) => String(value).padStart(2, "0");
+
+  return `audit-logs-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.xlsx`;
+}
+
+function saveBlob(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
 
 const columns: TableColumnsType<AdminAuditLog> = [
   { title: "ID", dataIndex: "id", width: 90 },
@@ -47,9 +72,12 @@ const columns: TableColumnsType<AdminAuditLog> = [
 ];
 
 function AuditLogs() {
+  const { message } = App.useApp();
   const [logs, setLogs] = useState<AdminAuditLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [error, setError] = useState("");
+  const canExport = getUserPermissions().includes("admin:audit:export_excel");
 
   const loadLogs = useCallback(async () => {
     setLoading(true);
@@ -90,6 +118,24 @@ function AuditLogs() {
     };
   }, []);
 
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const file = await exportAuditLogsToExcel();
+      saveBlob(file.blob, file.fileName || createFallbackFileName());
+      message.success("审计日志导出成功");
+      await loadLogs();
+    } catch (requestError) {
+      message.error(
+        requestError instanceof HttpError
+          ? requestError.message
+          : "审计日志导出失败，请稍后重试",
+      );
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="page-stack">
       <div className="page-heading">
@@ -99,9 +145,21 @@ function AuditLogs() {
             追踪后台用户、客户端用户、角色与权限相关的管理操作
           </Typography.Text>
         </div>
-        <Button icon={<ReloadOutlined />} onClick={() => void loadLogs()}>
-          刷新
-        </Button>
+        <Space>
+          <Button icon={<ReloadOutlined />} onClick={() => void loadLogs()}>
+            刷新
+          </Button>
+          {canExport && (
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              loading={exporting}
+              onClick={() => void handleExport()}
+            >
+              导出 Excel
+            </Button>
+          )}
+        </Space>
       </div>
 
       {error && (

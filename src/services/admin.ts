@@ -1,4 +1,4 @@
-import { request } from "../common/http";
+import { request, requestFile } from "../common/http";
 
 export interface LoginParams {
   email: string;
@@ -75,7 +75,8 @@ export type AdminAuditAction =
   | "DELETE_ROLE"
   | "ASSIGN_PERMISSION"
   | "ENABLE_CLIENT_USER"
-  | "DISABLE_CLIENT_USER";
+  | "DISABLE_CLIENT_USER"
+  | "EXPORT_AUDIT_LOGS_TO_EXCEL";
 
 export interface AdminAuditLog {
   id: number;
@@ -175,4 +176,8 @@ export function getPermissionList() {
 
 export function getAuditLogList() {
   return request<AdminAuditLog[]>("/admin/audit/list");
+}
+
+export function exportAuditLogsToExcel() {
+  return requestFile("/admin/audit/export-excel");
 }
